@@ -1449,9 +1449,9 @@
             this.l_EvolveKeptPokemonsAtStorageUsagePercentage.AutoSize = true;
             this.l_EvolveKeptPokemonsAtStorageUsagePercentage.Location = new System.Drawing.Point(6, 98);
             this.l_EvolveKeptPokemonsAtStorageUsagePercentage.Name = "l_EvolveKeptPokemonsAtStorageUsagePercentage";
-            this.l_EvolveKeptPokemonsAtStorageUsagePercentage.Size = new System.Drawing.Size(151, 13);
+            this.l_EvolveKeptPokemonsAtStorageUsagePercentage.Size = new System.Drawing.Size(259, 13);
             this.l_EvolveKeptPokemonsAtStorageUsagePercentage.TabIndex = 31;
-            this.l_EvolveKeptPokemonsAtStorageUsagePercentage.Text = "Keep min. duplicate Pokemon:";
+            this.l_EvolveKeptPokemonsAtStorageUsagePercentage.Text = "Evolve kept Pokemons at storage usage percentage:";
             // 
             // nUD_EvolveKeptPokemonsAtStorageUsagePercentage
             // 

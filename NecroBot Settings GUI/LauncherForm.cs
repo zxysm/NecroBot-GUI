@@ -248,10 +248,11 @@ namespace NecroBot_Settings_GUI
             }
 
 
-            _globalSettings.Save(_path);
+            _globalSettings.Save(_path + "\\config\\config.json");
+            _globalSettings.Auth.Save(_path + "\\config\\auth.json");
 
 
-            if (NecroBot == "")
+            if (NecroBot != "")
             {
                 Process.Start(NecroBot);
                 this.Close();
