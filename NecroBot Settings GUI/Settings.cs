@@ -10,6 +10,9 @@ using PokemonGo.RocketAPI.Enums;
 using POGOProtos.Enums;
 using POGOProtos.Inventory.Item;
 using NecroBot_Setting_GUI;
+using System.ComponentModel;
+using System.Reflection;
+using System.Linq;
 
 #endregion
 
@@ -17,7 +20,8 @@ namespace NecroBot_Settings_GUI
 {
     internal class AuthSettings
     {
-        [JsonIgnore] private string _filePath;
+        [JsonIgnore]
+        private string _filePath;
 
         public AuthType AuthType;
         public string GoogleUsername;
@@ -37,7 +41,7 @@ namespace NecroBot_Settings_GUI
                     var input = File.ReadAllText(_filePath);
 
                     var settings = new JsonSerializerSettings();
-                    settings.Converters.Add(new StringEnumConverter {CamelCaseText = true});
+                    settings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
 
                     JsonConvert.PopulateObject(input, this, settings);
                 }
@@ -73,7 +77,7 @@ namespace NecroBot_Settings_GUI
         public void Save(string path)
         {
             var output = JsonConvert.SerializeObject(this, Formatting.Indented,
-                new StringEnumConverter {CamelCaseText = true});
+                new StringEnumConverter { CamelCaseText = true });
 
             var folder = Path.GetDirectoryName(path);
             if (folder != null && !Directory.Exists(folder))
@@ -92,106 +96,227 @@ namespace NecroBot_Settings_GUI
             }
         }
     }
-    
+
     public class GlobalSettings
     {
-        
-        [JsonIgnore] internal AuthSettings Auth = new AuthSettings();
-        [JsonIgnore] public string GeneralConfigPath;
-        [JsonIgnore] public string ProfileConfigPath;
-        [JsonIgnore] public string ProfilePath;
 
-        public string TranslationLanguageCode = "en";
+        [JsonIgnore]
+        internal AuthSettings Auth = new AuthSettings();
+        [JsonIgnore]
+        public string GeneralConfigPath;
+        [JsonIgnore]
+        public string ProfileConfigPath;
+        [JsonIgnore]
+        public string ProfilePath;
+
+        [DefaultValue("en")]
+        public string TranslationLanguageCode;
         //autoupdate
-        public bool AutoUpdate = true;
-        public bool TransferConfigAndAuthOnUpdate = true;
+        [DefaultValue(true)]
+        public bool AutoUpdate;
+        [DefaultValue(true)]
+        public bool TransferConfigAndAuthOnUpdate;
         //pressakeyshit
-        public bool StartupWelcomeDelay = true;
+        [DefaultValue(false)]
+        public bool StartupWelcomeDelay;
         //console options
-        public int AmountOfPokemonToDisplayOnStart = 10;
-        public bool ShowPokeballCountsBeforeRecycle = true;
+        [DefaultValue(10)]
+        public int AmountOfPokemonToDisplayOnStart;
+        [DefaultValue(true)]
+        public bool ShowPokeballCountsBeforeRecycle;
         //powerup
-        public bool AutomaticallyLevelUpPokemon = false;
-        public int AmountOfTimesToUpgradeLoop = 5;
-        public int GetMinStarDustForLevelUp = 5000;
-        public string LevelUpByCPorIv = "iv";
-        public float UpgradePokemonCpMinimum = 1000;
-        public float UpgradePokemonIvMinimum = 95;
+        [DefaultValue(false)]
+        public bool AutomaticallyLevelUpPokemon;
+        [DefaultValue(5)]
+        public int AmountOfTimesToUpgradeLoop;
+        [DefaultValue(5000)]
+        public int GetMinStarDustForLevelUp;
+        [DefaultValue("iv")]
+        public string LevelUpByCPorIv;
+        [DefaultValue(1000)]
+        public float UpgradePokemonCpMinimum;
+        [DefaultValue(95)]
+        public float UpgradePokemonIvMinimum;
+        [DefaultValue("and")]
+        public string UpgradePokemonMinimumStatsOperator;
         //position
-        public bool DisableHumanWalking = false;
-        public double DefaultAltitude = 10;
-        public double DefaultLatitude = 40.785091;
-        public double DefaultLongitude = -73.968285;
-        public double WalkingSpeedInKilometerPerHour = 15.0;
-        public int MaxSpawnLocationOffset = 10;
+        [DefaultValue(false)]
+        public bool DisableHumanWalking;
+        [DefaultValue(10)]
+        public double DefaultAltitude;
+        [DefaultValue(40.778915)]
+        public double DefaultLatitude;
+        [DefaultValue(-73.962277)]
+        public double DefaultLongitude;
+        [DefaultValue(31.0)]
+        public double WalkingSpeedInKilometerPerHour;
+        [DefaultValue(10)]
+        public int MaxSpawnLocationOffset;
         //delays
-        public int DelayBetweenPlayerActions = 5000;
-        public int DelayBetweenPokemonCatch = 2000;
+        [DefaultValue(5000)]
+        public int DelayBetweenPlayerActions;
+        [DefaultValue(2000)]
+        public int DelayBetweenPokemonCatch;
         //dump stats
-        public bool DumpPokemonStats = false;
+        [DefaultValue(false)]
+        public bool DumpPokemonStats;
         //evolve
-        public float EvolveAboveIvValue = 95;
-        public bool EvolveAllPokemonAboveIv = false;
-        public bool EvolveAllPokemonWithEnoughCandy = true;
-        public bool KeepPokemonsThatCanEvolve = false;
-        public double EvolveKeptPokemonsAtStorageUsagePercentage = 0.90;
-        //gpx
-        public bool UseGpxPathing = false;
-        public string GpxFile = "GPXPath.GPX";
-        //recycle
-        public bool VerboseRecycling = true;
-        public double RecycleInventoryAtUsagePercentage = 0.90;
+        [DefaultValue(95)]
+        public float EvolveAboveIvValue;
+        [DefaultValue(false)]
+        public bool EvolveAllPokemonAboveIv;
+        [DefaultValue(true)]
+        public bool EvolveAllPokemonWithEnoughCandy;
+        [DefaultValue(90.0)]
+        public double EvolveKeptPokemonsAtStorageUsagePercentage;
+        [DefaultValue(false)]
+        public bool KeepPokemonsThatCanEvolve;
         //keeping
-        public int KeepMinCp = 1250;
-        public int KeepMinDuplicatePokemon = 1;
-        public float KeepMinIvPercentage = 90;
-        public bool PrioritizeIvOverCp = false;
-        //luckyandincense
-        public bool UseEggIncubators = true;
-        public bool UseLuckyEggConstantly = false;
-        public int UseLuckyEggsMinPokemonAmount = 30;
-        public bool UseLuckyEggsWhileEvolving = false;
-        public bool UseIncenseConstantly = false;
+        [DefaultValue(1250)]
+        public int KeepMinCp;
+        [DefaultValue(90)]
+        public float KeepMinIvPercentage;
+        [DefaultValue(6)]
+        public int KeepMinLvl;
+        [DefaultValue("or")]
+        public string KeepMinOperator;
+        [DefaultValue(false)]
+        public bool UseKeepMinLvl;
+        [DefaultValue(false)]
+        public bool PrioritizeIvOverCp;
+        [DefaultValue(1)]
+        public int KeepMinDuplicatePokemon;
+        //gpx
+        [DefaultValue(false)]
+        public bool UseGpxPathing;
+        [DefaultValue("GPXPath.GPX")]
+        public string GpxFile;
+        //recycle
+        [DefaultValue(true)]
+        public bool VerboseRecycling;
+        [DefaultValue(90.0)]
+        public double RecycleInventoryAtUsagePercentage;
+        //lucky, incense and berries
+        [DefaultValue(true)]
+        public bool UseEggIncubators;
+        [DefaultValue(false)]
+        public bool UseLuckyEggConstantly;
+        [DefaultValue(30)]
+        public int UseLuckyEggsMinPokemonAmount;
+        [DefaultValue(false)]
+        public bool UseLuckyEggsWhileEvolving;
+        [DefaultValue(false)]
+        public bool UseIncenseConstantly;
+        [DefaultValue(1000)]
+        public int UseBerriesMinCp;
+        [DefaultValue(90)]
+        public float UseBerriesMinIv;
+        [DefaultValue(0.20)]
+        public double UseBerriesBelowCatchProbability;
+        [DefaultValue("and")]
+        public string UseBerriesOperator;
         //snipe
-        public bool UseSnipeOnlineLocationServer = true;
-        public bool UseSnipeLocationServer = false;
-        public string SnipeLocationServer = "localhost";
-        public int SnipeLocationServerPort = 16969;
-        public int MinPokeballsToSnipe = 20;
-        public int MinPokeballsWhileSnipe = 0;
-        public int MinDelayBetweenSnipes = 60000;
-        public double SnipingScanOffset = 0.003;
-        public bool SnipeAtPokestops = false;
-        public bool SnipeIgnoreUnknownIv = false;
-        public bool UseTransferIvForSnipe = false;
+        [DefaultValue(true)]
+        public bool UseSnipeOnlineLocationServer;
+        [DefaultValue(false)]
+        public bool UseSnipeLocationServer;
+        [DefaultValue("localhost")]
+        public string SnipeLocationServer;
+        [DefaultValue(16969)]
+        public int SnipeLocationServerPort;
+        [DefaultValue(true)]
+        public bool GetSniperInfoFromPokezz;
+        [DefaultValue(true)]
+        public bool GetOnlyVerifiedSniperInfoFromPokezz;
+        [DefaultValue(20)]
+        public int MinPokeballsToSnipe;
+        [DefaultValue(0)]
+        public int MinPokeballsWhileSnipe;
+        [DefaultValue(60000)]
+        public int MinDelayBetweenSnipes;
+        [DefaultValue(0.003)]
+        public double SnipingScanOffset;
+        [DefaultValue(false)]
+        public bool SnipeAtPokestops;
+        [DefaultValue(false)]
+        public bool SnipeIgnoreUnknownIv;
+        [DefaultValue(false)]
+        public bool UseTransferIvForSnipe;
         //rename
-        public bool RenamePokemon = false;
-        public bool RenameOnlyAboveIv = true;
-        public string RenameTemplate = "{1}_{0}";
+        [DefaultValue(false)]
+        public bool RenamePokemon;
+        [DefaultValue(true)]
+        public bool RenameOnlyAboveIv;
+        [DefaultValue("{1}_{0}")]
+        public string RenameTemplate;
         //amounts
-        public int MaxPokeballsPerPokemon = 6;
-        public int MaxTravelDistanceInMeters = 1000;
-        public int TotalAmountOfPokebalsToKeep = 120;
-        public int TotalAmountOfPotionsToKeep = 80;
-        public int TotalAmountOfRevivesToKeep = 60;
+        [DefaultValue(6)]
+        public int MaxPokeballsPerPokemon;
+        [DefaultValue(1000)]
+        public int MaxTravelDistanceInMeters;
+        [DefaultValue(120)]
+        public int TotalAmountOfPokeballsToKeep;
+        [DefaultValue(80)]
+        public int TotalAmountOfPotionsToKeep;
+        [DefaultValue(60)]
+        public int TotalAmountOfRevivesToKeep;
+        [DefaultValue(50)]
+        public int TotalAmountOfBerriesToKeep;
         //balls
-        public int UseGreatBallAboveCp = 1000;
-        public int UseUltraBallAboveCp = 1250;
-        public int UseMasterBallAboveCp = 1500;
-        public int UseGreatBallAboveIv = 85;
-        public int UseUltraBallAboveIv = 90;
-        public double UseGreatBallBelowCatchProbability = 0.3;
-        public double UseUltraBallBelowCatchProbability = 0.2;
-        public double UseMasterBallBelowCatchProbability = 0.05;
+        [DefaultValue(1000)]
+        public int UseGreatBallAboveCp;
+        [DefaultValue(1250)]
+        public int UseUltraBallAboveCp;
+        [DefaultValue(1500)]
+        public int UseMasterBallAboveCp;
+        [DefaultValue(85.0)]
+        public double UseGreatBallAboveIv;
+        [DefaultValue(95.0)]
+        public double UseUltraBallAboveIv;
+        [DefaultValue(0.2)]
+        public double UseGreatBallBelowCatchProbability;
+        [DefaultValue(0.1)]
+        public double UseUltraBallBelowCatchProbability;
+        [DefaultValue(0.05)]
+        public double UseMasterBallBelowCatchProbability;
+        //customizable catch
+        [DefaultValue(false)]
+        public bool EnableHumanizedThrows;
+        [DefaultValue(40)]
+        public int NiceThrowChance;
+        [DefaultValue(30)]
+        public int GreatThrowChance;
+        [DefaultValue(10)]
+        public int ExcellentThrowChance;
+        [DefaultValue(90)]
+        public int CurveThrowChance;
+        [DefaultValue(90.00)]
+        public double ForceGreatThrowOverIv;
+        [DefaultValue(95.00)]
+        public double ForceExcellentThrowOverIv;
+        [DefaultValue(1000)]
+        public int ForceGreatThrowOverCp;
+        [DefaultValue(1500)]
+        public int ForceExcellentThrowOverCp;
         //transfer
-        public bool TransferDuplicatePokemon = true;
+        [DefaultValue(false)]
+        public bool TransferWeakPokemon;
+        [DefaultValue(true)]
+        public bool TransferDuplicatePokemon;
+        [DefaultValue(true)]
+        public bool TransferDuplicatePokemonOnCapture;
         //favorite
-        public float FavoriteMinIvPercentage = 95;
-        public bool AutoFavoritePokemon = false;
+        [DefaultValue(95)]
+        public float FavoriteMinIvPercentage;
+        [DefaultValue(false)]
+        public bool AutoFavoritePokemon;
         //notcatch
-        public bool UsePokemonToNotCatchFilter = false;
-        public int WebSocketPort = 14251;
-
+        [DefaultValue(false)]
+        public bool UsePokemonToNotCatchFilter;
+        [DefaultValue(false)]
+        public bool UsePokemonSniperFilterOnly;
+        [DefaultValue(14251)]
+        public int WebSocketPort;
         public List<KeyValuePair<ItemId, int>> ItemRecycleFilter = new List<KeyValuePair<ItemId, int>>
         {
             new KeyValuePair<ItemId, int>(ItemId.ItemUnknown, 0),
@@ -204,11 +329,6 @@ namespace NecroBot_Settings_GUI
             new KeyValuePair<ItemId, int>(ItemId.ItemXAttack, 100),
             new KeyValuePair<ItemId, int>(ItemId.ItemXDefense, 100),
             new KeyValuePair<ItemId, int>(ItemId.ItemXMiracle, 100),
-            new KeyValuePair<ItemId, int>(ItemId.ItemRazzBerry, 50),
-            new KeyValuePair<ItemId, int>(ItemId.ItemBlukBerry, 10),
-            new KeyValuePair<ItemId, int>(ItemId.ItemNanabBerry, 10),
-            new KeyValuePair<ItemId, int>(ItemId.ItemWeparBerry, 30),
-            new KeyValuePair<ItemId, int>(ItemId.ItemPinapBerry, 30),
             new KeyValuePair<ItemId, int>(ItemId.ItemSpecialCamera, 100),
             new KeyValuePair<ItemId, int>(ItemId.ItemIncubatorBasicUnlimited, 100),
             new KeyValuePair<ItemId, int>(ItemId.ItemIncubatorBasic, 100),
@@ -222,21 +342,21 @@ namespace NecroBot_Settings_GUI
             PokemonId.Venusaur,
             PokemonId.Charizard,
             PokemonId.Blastoise,
-            PokemonId.Nidoqueen,
-            PokemonId.Nidoking,
+            //PokemonId.Nidoqueen,
+            //PokemonId.Nidoking,
             PokemonId.Clefable,
-            PokemonId.Vileplume,
+            //PokemonId.Vileplume,
             //PokemonId.Golduck,
-            PokemonId.Arcanine,
-            PokemonId.Poliwrath,
-            PokemonId.Machamp,
-            PokemonId.Victreebel,
-            PokemonId.Golem,
-            PokemonId.Slowbro,
+            //PokemonId.Arcanine,
+            //PokemonId.Poliwrath,
+            //PokemonId.Machamp,
+            //PokemonId.Victreebel,
+            //PokemonId.Golem,
+            //PokemonId.Slowbro,
             //PokemonId.Farfetchd,
             PokemonId.Muk,
-            PokemonId.Exeggutor,
-            PokemonId.Lickitung,
+            //PokemonId.Exeggutor,
+            //PokemonId.Lickitung,
             PokemonId.Chansey,
             //PokemonId.Kangaskhan,
             //PokemonId.MrMime,
@@ -311,29 +431,29 @@ namespace NecroBot_Settings_GUI
         public Dictionary<PokemonId, TransferFilter> PokemonsTransferFilter = new Dictionary<PokemonId, TransferFilter>
         {
             //criteria: based on NY Central Park and Tokyo variety + sniping optimization
-            {PokemonId.Golduck, new TransferFilter(1800, 95, 1)},
-            {PokemonId.Farfetchd, new TransferFilter(1250, 80, 1)},
-            {PokemonId.Krabby, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Kangaskhan, new TransferFilter(1500, 60, 1)},
-            {PokemonId.Horsea, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Staryu, new TransferFilter(1250, 95, 1)},
-            {PokemonId.MrMime, new TransferFilter(1250, 40, 1)},
-            {PokemonId.Scyther, new TransferFilter(1800, 80, 1)},
-            {PokemonId.Jynx, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Electabuzz, new TransferFilter(1250, 80, 1)},
-            {PokemonId.Magmar, new TransferFilter(1500, 80, 1)},
-            {PokemonId.Pinsir, new TransferFilter(1800, 95, 1)},
-            {PokemonId.Tauros, new TransferFilter(1250, 90, 1)},
-            {PokemonId.Magikarp, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Gyarados, new TransferFilter(1250, 90, 1)},
-            {PokemonId.Lapras, new TransferFilter(1800, 80, 1)},
-            {PokemonId.Eevee, new TransferFilter(1250, 95, 1)},
-            {PokemonId.Vaporeon, new TransferFilter(1500, 90, 1)},
-            {PokemonId.Jolteon, new TransferFilter(1500, 90, 1)},
-            {PokemonId.Flareon, new TransferFilter(1500, 90, 1)},
-            {PokemonId.Porygon, new TransferFilter(1250, 60, 1)},
-            {PokemonId.Snorlax, new TransferFilter(2600, 90, 1)},
-            {PokemonId.Dragonite, new TransferFilter(2600, 90, 1)}
+            {PokemonId.Golduck, new TransferFilter(1800, 6, false, 95, "or", 1)},
+            {PokemonId.Farfetchd, new TransferFilter(1250, 6, false, 80, "or", 1)},
+            {PokemonId.Krabby, new TransferFilter(1250, 6, false, 95, "or", 1)},
+            {PokemonId.Kangaskhan, new TransferFilter(1500, 6, false, 60, "or", 1)},
+            {PokemonId.Horsea, new TransferFilter(1250, 6, false, 95, "or", 1)},
+            {PokemonId.Staryu, new TransferFilter(1250, 6, false, 95, "or", 1)},
+            {PokemonId.MrMime, new TransferFilter(1250, 6, false, 40, "or", 1)},
+            {PokemonId.Scyther, new TransferFilter(1800, 6, false, 80, "or", 1)},
+            {PokemonId.Jynx, new TransferFilter(1250, 6, false, 95, "or", 1)},
+            {PokemonId.Electabuzz, new TransferFilter(1250, 6, false, 80, "or", 1)},
+            {PokemonId.Magmar, new TransferFilter(1500, 6, false, 80, "or", 1)},
+            {PokemonId.Pinsir, new TransferFilter(1800, 6, false, 95, "or", 1)},
+            {PokemonId.Tauros, new TransferFilter(1250, 6, false, 90, "or", 1)},
+            {PokemonId.Magikarp, new TransferFilter(200, 6, false, 95, "or", 1)},
+            {PokemonId.Gyarados, new TransferFilter(1250, 6, false, 90, "or", 1)},
+            {PokemonId.Lapras, new TransferFilter(1800, 6, false, 80, "or", 1)},
+            {PokemonId.Eevee, new TransferFilter(1250, 6, false, 95, "or", 1)},
+            {PokemonId.Vaporeon, new TransferFilter(1500, 6, false, 90, "or", 1)},
+            {PokemonId.Jolteon, new TransferFilter(1500, 6, false, 90, "or", 1)},
+            {PokemonId.Flareon, new TransferFilter(1500, 6, false, 90, "or", 1)},
+            {PokemonId.Porygon, new TransferFilter(1250, 6, false, 60, "or", 1)},
+            {PokemonId.Snorlax, new TransferFilter(2600, 6, false, 90, "or", 1)},
+            {PokemonId.Dragonite, new TransferFilter(2600, 6, false, 90, "or", 1)}
         };
 
         public SnipeSettings PokemonToSnipe = new SnipeSettings
@@ -413,7 +533,23 @@ namespace NecroBot_Settings_GUI
             PokemonId.Mewtwo
         };
 
-        
+        public GlobalSettings()
+        {
+            InitializePropertyDefaultValues(this);
+        }
+
+        public void InitializePropertyDefaultValues(object obj)
+        {
+            FieldInfo[] fields = obj.GetType().GetFields();
+
+            foreach (FieldInfo field in fields)
+            {
+                var d = field.GetCustomAttribute<DefaultValueAttribute>();
+
+                if (d != null)
+                    field.SetValue(obj, d.Value);
+            }
+        }
 
         public static GlobalSettings Default => new GlobalSettings();
 
@@ -426,38 +562,28 @@ namespace NecroBot_Settings_GUI
 
             if (File.Exists(configFile))
             {
+
                 try
                 {
                     //if the file exists, load the settings
                     var input = File.ReadAllText(configFile);
 
                     var jsonSettings = new JsonSerializerSettings();
-                    jsonSettings.Converters.Add(new StringEnumConverter {CamelCaseText = true});
+                    jsonSettings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
                     jsonSettings.ObjectCreationHandling = ObjectCreationHandling.Replace;
                     jsonSettings.DefaultValueHandling = DefaultValueHandling.Populate;
 
                     settings = JsonConvert.DeserializeObject<GlobalSettings>(input, jsonSettings);
 
-                    // One day we might be able to better do this so its automatic
-                    /*
-                    FieldInfo[] fi = typeof(GlobalSettings).GetFields(BindingFlags.Public | BindingFlags.Instance);
-                    foreach (FieldInfo info in fi)
+                    //This makes sure that existing config files dont get null values which lead to an exception
+                    foreach (var filter in settings.PokemonsTransferFilter.Where(x => x.Value.KeepMinOperator == null))
                     {
-                        if (info.GetValue(Default) is int || info.GetValue(Default) is bool ||
-                            info.GetValue(Default) is float)
-                        {
-                            
-                        }
-                        if (info.GetValue(Default) is double)
-                        {
-                            Logger.Write($"{info.Name}={info.GetValue(Default)}", LogLevel.Error);
-
-                            Type type = settings.GetType();
-                            PropertyInfo propertyInfo = type.GetProperty(info.Name, BindingFlags.Instance | BindingFlags.Public);
-                            propertyInfo.SetValue(settings, info.GetValue(Default));
-                        }
+                        filter.Value.KeepMinOperator = "or";
                     }
-                    */
+                    foreach (var filter in settings.PokemonsTransferFilter.Where(x => x.Value.Moves == null))
+                    {
+                        filter.Value.Moves = new List<PokemonMove>();
+                    }
                 }
                 catch (JsonReaderException exception)
                 {
@@ -466,75 +592,36 @@ namespace NecroBot_Settings_GUI
                 }
             }
             else
-            {
                 settings = new GlobalSettings();
-            }
 
-            if (settings.DefaultAltitude == 0)
-            {
-                settings.DefaultAltitude = Default.DefaultAltitude;
-            }
 
-            if (settings.DefaultLatitude == 0)
-            {
-                settings.DefaultLatitude = Default.DefaultLatitude;
-            }
-
-            if (settings.DefaultLongitude == 0)
-            {
-                settings.DefaultLongitude = Default.DefaultLongitude;
-            }
-
-            if (settings.WebSocketPort == 0)
-            {
-                settings.WebSocketPort = 14251;
-            }
-
-            if (settings.PokemonToSnipe == null)
-            {
-                settings.PokemonToSnipe = Default.PokemonToSnipe;
-            }
-
-            if (settings.RenameTemplate == null)
-            {
-                settings.RenameTemplate = Default.RenameTemplate;
-            }
-
-            if (settings.SnipeLocationServer == null)
-            {
-                settings.SnipeLocationServer = Default.SnipeLocationServer;
-            }
-
-            if (settings.SnipingScanOffset <= 0)
-            {
-                settings.SnipingScanOffset = Default.SnipingScanOffset;
-            }
-
-            if (settings.RecycleInventoryAtUsagePercentage <= 0)
-            {
-                settings.RecycleInventoryAtUsagePercentage = Default.RecycleInventoryAtUsagePercentage;
-            }
-
-            if (settings.WalkingSpeedInKilometerPerHour <= 0)
-            {
-                settings.WalkingSpeedInKilometerPerHour = Default.WalkingSpeedInKilometerPerHour;
-            }
-
-            if (settings.EvolveKeptPokemonsAtStorageUsagePercentage <= 0)
-            {
-                settings.EvolveKeptPokemonsAtStorageUsagePercentage = Default.EvolveKeptPokemonsAtStorageUsagePercentage;
-            }
-            
             settings.ProfilePath = profilePath;
             settings.ProfileConfigPath = profileConfigPath;
             settings.GeneralConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "config");
 
             var firstRun = !File.Exists(configFile);
 
+            settings.migratePercentages();
+
             settings.Save(configFile);
             settings.Auth.Load(Path.Combine(profileConfigPath, "auth.json"));
 
             return firstRun ? null : settings;
+        }
+
+        /// <summary>
+        /// Method for issue #1966
+        /// </summary>
+        private void migratePercentages()
+        {
+            if (EvolveKeptPokemonsAtStorageUsagePercentage <= 1.0)
+            {
+                EvolveKeptPokemonsAtStorageUsagePercentage *= 100.0f;
+            }
+            if (RecycleInventoryAtUsagePercentage <= 1.0)
+            {
+                RecycleInventoryAtUsagePercentage *= 100.0f;
+            }
         }
 
         public void Save(string fullPath)
@@ -589,7 +676,7 @@ namespace NecroBot_Settings_GUI
         {
             get
             {
-                return _settings.DefaultLatitude + _rand.NextDouble()*((double) _settings.MaxSpawnLocationOffset/111111);
+                return _settings.DefaultLatitude + _rand.NextDouble() * ((double)_settings.MaxSpawnLocationOffset / 111111);
             }
 
             set { _settings.DefaultLatitude = value; }
@@ -600,8 +687,8 @@ namespace NecroBot_Settings_GUI
             get
             {
                 return _settings.DefaultLongitude +
-                       _rand.NextDouble()*
-                       ((double) _settings.MaxSpawnLocationOffset/111111/Math.Cos(_settings.DefaultLatitude));
+                       _rand.NextDouble() *
+                       ((double)_settings.MaxSpawnLocationOffset / 111111 / Math.Cos(_settings.DefaultLatitude));
             }
 
             set { _settings.DefaultLongitude = value; }
@@ -613,7 +700,7 @@ namespace NecroBot_Settings_GUI
 
             set { _settings.DefaultAltitude = value; }
         }
-        
+
         string ISettings.GoogleUsername
         {
             get { return _settings.Auth.GoogleUsername; }
@@ -627,14 +714,14 @@ namespace NecroBot_Settings_GUI
 
             set { _settings.Auth.GooglePassword = value; }
         }
-        
+
         string ISettings.PtcUsername
         {
             get { return _settings.Auth.PtcUsername; }
 
             set { _settings.Auth.PtcUsername = value; }
         }
-        
+
         string ISettings.PtcPassword
         {
             get { return _settings.Auth.PtcPassword; }
@@ -657,34 +744,53 @@ namespace NecroBot_Settings_GUI
         public string GeneralConfigPath => _settings.GeneralConfigPath;
         public bool AutoUpdate => _settings.AutoUpdate;
         public bool TransferConfigAndAuthOnUpdate => _settings.TransferConfigAndAuthOnUpdate;
+        public bool TransferWeakPokemon => _settings.TransferWeakPokemon;
         public bool DisableHumanWalking => _settings.DisableHumanWalking;
         public float KeepMinIvPercentage => _settings.KeepMinIvPercentage;
+        public string KeepMinOperator => _settings.KeepMinOperator;
         public int KeepMinCp => _settings.KeepMinCp;
+        public int KeepMinLvl => _settings.KeepMinLvl;
+        public bool UseKeepMinLvl => _settings.UseKeepMinLvl;
         public bool AutomaticallyLevelUpPokemon => _settings.AutomaticallyLevelUpPokemon;
         public int AmountOfTimesToUpgradeLoop => _settings.AmountOfTimesToUpgradeLoop;
         public string LevelUpByCPorIv => _settings.LevelUpByCPorIv;
         public int GetMinStarDustForLevelUp => _settings.GetMinStarDustForLevelUp;
         public bool UseLuckyEggConstantly => _settings.UseLuckyEggConstantly;
-
         public bool UseIncenseConstantly => _settings.UseIncenseConstantly;
+        public int UseBerriesMinCp => _settings.UseBerriesMinCp;
+        public float UseBerriesMinIv => _settings.UseBerriesMinIv;
+        public double UseBerriesBelowCatchProbability => _settings.UseBerriesBelowCatchProbability;
+        public string UseBerriesOperator => _settings.UseBerriesOperator;
         public float UpgradePokemonIvMinimum => _settings.UpgradePokemonIvMinimum;
         public float UpgradePokemonCpMinimum => _settings.UpgradePokemonCpMinimum;
+        public string UpgradePokemonMinimumStatsOperator => _settings.UpgradePokemonMinimumStatsOperator;
         public double WalkingSpeedInKilometerPerHour => _settings.WalkingSpeedInKilometerPerHour;
         public bool EvolveAllPokemonWithEnoughCandy => _settings.EvolveAllPokemonWithEnoughCandy;
         public bool KeepPokemonsThatCanEvolve => _settings.KeepPokemonsThatCanEvolve;
         public bool TransferDuplicatePokemon => _settings.TransferDuplicatePokemon;
+        public bool TransferDuplicatePokemonOnCapture => _settings.TransferDuplicatePokemonOnCapture;
         public bool UseEggIncubators => _settings.UseEggIncubators;
         public int UseGreatBallAboveCp => _settings.UseGreatBallAboveCp;
         public int UseUltraBallAboveCp => _settings.UseUltraBallAboveCp;
         public int UseMasterBallAboveCp => _settings.UseMasterBallAboveCp;
-        public int UseGreatBallAboveIv => _settings.UseGreatBallAboveIv;
-        public int UseUltraBallAboveIv => _settings.UseUltraBallAboveIv;
+        public double UseGreatBallAboveIv => _settings.UseGreatBallAboveIv;
+        public double UseUltraBallAboveIv => _settings.UseUltraBallAboveIv;
         public double UseMasterBallBelowCatchProbability => _settings.UseMasterBallBelowCatchProbability;
         public double UseUltraBallBelowCatchProbability => _settings.UseUltraBallBelowCatchProbability;
         public double UseGreatBallBelowCatchProbability => _settings.UseGreatBallBelowCatchProbability;
+        public bool EnableHumanizedThrows => _settings.EnableHumanizedThrows;
+        public int NiceThrowChance => _settings.NiceThrowChance;
+        public int GreatThrowChance => _settings.GreatThrowChance;
+        public int ExcellentThrowChance => _settings.ExcellentThrowChance;
+        public int CurveThrowChance => _settings.CurveThrowChance;
+        public double ForceGreatThrowOverIv => _settings.ForceGreatThrowOverIv;
+        public double ForceExcellentThrowOverIv => _settings.ForceExcellentThrowOverIv;
+        public int ForceGreatThrowOverCp => _settings.ForceGreatThrowOverCp;
+        public int ForceExcellentThrowOverCp => _settings.ForceExcellentThrowOverCp;
         public int DelayBetweenPokemonCatch => _settings.DelayBetweenPokemonCatch;
         public int DelayBetweenPlayerActions => _settings.DelayBetweenPlayerActions;
         public bool UsePokemonToNotCatchFilter => _settings.UsePokemonToNotCatchFilter;
+        public bool UsePokemonSniperFilterOnly => _settings.UsePokemonSniperFilterOnly;
         public int KeepMinDuplicatePokemon => _settings.KeepMinDuplicatePokemon;
         public bool PrioritizeIvOverCp => _settings.PrioritizeIvOverCp;
         public int MaxTravelDistanceInMeters => _settings.MaxTravelDistanceInMeters;
@@ -721,14 +827,17 @@ namespace NecroBot_Settings_GUI
         public SnipeSettings PokemonToSnipe => _settings.PokemonToSnipe;
         public string SnipeLocationServer => _settings.SnipeLocationServer;
         public int SnipeLocationServerPort => _settings.SnipeLocationServerPort;
+        public bool GetSniperInfoFromPokezz => _settings.GetSniperInfoFromPokezz;
+        public bool GetOnlyVerifiedSniperInfoFromPokezz => _settings.GetOnlyVerifiedSniperInfoFromPokezz;
         public bool UseSnipeLocationServer => _settings.UseSnipeLocationServer;
         public bool UseSnipeOnlineLocationServer => _settings.UseSnipeOnlineLocationServer;
         public bool UseTransferIvForSnipe => _settings.UseTransferIvForSnipe;
         public bool SnipeIgnoreUnknownIv => _settings.SnipeIgnoreUnknownIv;
         public int MinDelayBetweenSnipes => _settings.MinDelayBetweenSnipes;
         public double SnipingScanOffset => _settings.SnipingScanOffset;
-        public int TotalAmountOfPokeballsToKeep => _settings.TotalAmountOfPokebalsToKeep;
+        public int TotalAmountOfPokeballsToKeep => _settings.TotalAmountOfPokeballsToKeep;
         public int TotalAmountOfPotionsToKeep => _settings.TotalAmountOfPotionsToKeep;
         public int TotalAmountOfRevivesToKeep => _settings.TotalAmountOfRevivesToKeep;
+        public int TotalAmountOfBerriesToKeep => _settings.TotalAmountOfBerriesToKeep;
     }
 }

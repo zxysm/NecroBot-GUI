@@ -7,6 +7,8 @@ using GMap.NET.MapProviders;
 using System.Globalization;
 using System.Diagnostics;
 using PokemonGo.RocketAPI.Enums;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace NecroBot_Settings_GUI
 {
@@ -75,11 +77,11 @@ namespace NecroBot_Settings_GUI
             cb_EvolveAllPokemonAboveIv.Checked = _globalSettings.EvolveAllPokemonAboveIv;
             cb_EvolveAllPokemonWithEnoughCandy.Checked = _globalSettings.EvolveAllPokemonWithEnoughCandy;
             cb_KeepPokemonsThatCanEvolve.Checked = _globalSettings.KeepPokemonsThatCanEvolve;
-            nUD_EvolveKeptPokemonsAtStorageUsagePercentage.Value = Convert.ToInt32(_globalSettings.EvolveKeptPokemonsAtStorageUsagePercentage * 100);
+            nUD_EvolveKeptPokemonsAtStorageUsagePercentage.Value = Convert.ToInt32(_globalSettings.EvolveKeptPokemonsAtStorageUsagePercentage);
             cb_UseGpxPathing.Checked = _globalSettings.UseGpxPathing;
             tb_GpxFile.Text = _globalSettings.GpxFile.ToString();
             cb_VerboseRecycling.Checked = _globalSettings.VerboseRecycling;
-            nUD_RecycleInventoryAtUsagePercentag.Value = Convert.ToInt32(_globalSettings.RecycleInventoryAtUsagePercentage*100);
+            nUD_RecycleInventoryAtUsagePercentag.Value = Convert.ToInt32(_globalSettings.RecycleInventoryAtUsagePercentage);
             nUD_KeepMinCp.Value = Convert.ToInt32(_globalSettings.KeepMinCp);
             nUD_KeepMinDuplicatePokemon.Value = Convert.ToInt32(_globalSettings.KeepMinDuplicatePokemon);
             nUD_KeepMinIvPercentage.Value = Convert.ToInt32(_globalSettings.KeepMinIvPercentage);
@@ -105,7 +107,7 @@ namespace NecroBot_Settings_GUI
             tb_RenameTemplate.Text = _globalSettings.RenameTemplate.ToString();
             nUD_MaxPokeballsPerPokemon.Value = Convert.ToInt32(_globalSettings.MaxPokeballsPerPokemon);
             nUD_MaxTravelDistanceInMeters.Value = Convert.ToInt32(_globalSettings.MaxTravelDistanceInMeters);
-            nUD_TotalAmountOfPokebalsToKeep.Value = Convert.ToInt32(_globalSettings.TotalAmountOfPokebalsToKeep);
+            nUD_TotalAmountOfPokebalsToKeep.Value = Convert.ToInt32(_globalSettings.TotalAmountOfPokeballsToKeep);
             nUD_TotalAmountOfPotionsToKeep.Value = Convert.ToInt32(_globalSettings.TotalAmountOfPotionsToKeep);
             nUD_TotalAmountOfRevivesToKeep.Value = Convert.ToInt32(_globalSettings.TotalAmountOfRevivesToKeep);
             nUD_UseGreatBallAboveCp.Value = Convert.ToInt32(_globalSettings.UseGreatBallAboveCp);
@@ -121,7 +123,30 @@ namespace NecroBot_Settings_GUI
             cb_AutoFavoritePokemon.Checked = _globalSettings.AutoFavoritePokemon;
             cb_UsePokemonToNotCatchFilter.Checked = _globalSettings.UsePokemonToNotCatchFilter;
             nUD_WebSocketPort.Value = Convert.ToInt32(_globalSettings.WebSocketPort);
+            cb_UpgradePokemonMinimumStatsOperator.Text = _globalSettings.UpgradePokemonMinimumStatsOperator.ToString();
+            nUD_KeepMinLvl.Value = Convert.ToInt32(_globalSettings.KeepMinLvl);
+            cb_KeepMinOperator.Text = _globalSettings.KeepMinOperator.ToString();
+            cb_UseKeepMinLvl.Checked = _globalSettings.UseKeepMinLvl;
+            cb_TransferWeakPokemon.Checked = _globalSettings.TransferWeakPokemon;
+            cb_TransferDuplicatePokemonOnCapture.Checked = _globalSettings.TransferDuplicatePokemonOnCapture;
+            cb_EnableHumanizedThrows.Checked = _globalSettings.EnableHumanizedThrows;
+            nUD_TotalAmountOfBerriesToKeep.Value = Convert.ToInt32(_globalSettings.TotalAmountOfBerriesToKeep);
+            cb_GetSniperInfoFromPokezz.Checked = _globalSettings.GetSniperInfoFromPokezz;
+            cb_GetOnlyVerifiedSniperInfoFromPokezz.Checked = _globalSettings.GetOnlyVerifiedSniperInfoFromPokezz;
+            cb_UsePokemonSniperFilterOnly.Checked = _globalSettings.UsePokemonSniperFilterOnly;
+            nUD_UseBerriesMinCp.Value = Convert.ToInt32(_globalSettings.UseBerriesMinCp);
+            nUD_UseBerriesMinIv.Value = Convert.ToInt32(_globalSettings.UseBerriesMinIv);
+            nUD_UseBerriesBelowCatchProbability.Value = Convert.ToInt32(_globalSettings.UseBerriesBelowCatchProbability * 100);
+            cb_UseBerriesOperator.Text = _globalSettings.UseBerriesOperator.ToString();
+            nUD_NiceThrowChance.Value = Convert.ToInt32(_globalSettings.NiceThrowChance);
+            nUD_GreatThrowChance.Value = Convert.ToInt32(_globalSettings.GreatThrowChance);
+            nUD_ExcellentThrowChance.Value = Convert.ToInt32(_globalSettings.ExcellentThrowChance);
+            nUD_CurveThrowChance.Value = Convert.ToInt32(_globalSettings.CurveThrowChance);
 
+            nUD_ForceGreatThrowOverIv.Value = Convert.ToInt32(_globalSettings.ForceGreatThrowOverIv);
+            nUD_ForceExcellentThrowOverIv.Value = Convert.ToInt32(_globalSettings.ForceExcellentThrowOverIv);
+            nUD_ForceGreatThrowOverCp.Value = Convert.ToInt32(_globalSettings.ForceGreatThrowOverCp);
+            nUD_ForceExcellentThrowOverCp.Value = Convert.ToInt32(_globalSettings.ForceExcellentThrowOverCp);
 
             if (_globalSettings.Auth.AuthType.Equals(AuthType.Ptc))
             {
@@ -154,8 +179,10 @@ namespace NecroBot_Settings_GUI
             gMapControl1.Zoom = trackBar.Value;
         }
 
+
         private void btnSave_Click(object sender, EventArgs e)
         {
+
             b_StartNecroBot.Enabled = false;
             _globalSettings.TranslationLanguageCode = cb_TranslationLanguageCode.Text.ToLower();
             _globalSettings.AutoUpdate = cb_AutoUpdate.Checked;
@@ -185,11 +212,11 @@ namespace NecroBot_Settings_GUI
             _globalSettings.EvolveAllPokemonAboveIv = cb_EvolveAllPokemonAboveIv.Checked;
             _globalSettings.EvolveAllPokemonWithEnoughCandy = cb_EvolveAllPokemonWithEnoughCandy.Checked;
             _globalSettings.KeepPokemonsThatCanEvolve = cb_KeepPokemonsThatCanEvolve.Checked;
-            _globalSettings.EvolveKeptPokemonsAtStorageUsagePercentage = Convert.ToDouble(nUD_EvolveKeptPokemonsAtStorageUsagePercentage.Value) / 100;
+            _globalSettings.EvolveKeptPokemonsAtStorageUsagePercentage = Convert.ToDouble(nUD_EvolveKeptPokemonsAtStorageUsagePercentage.Value);
             _globalSettings.UseGpxPathing = cb_UseGpxPathing.Checked;
             _globalSettings.GpxFile = tb_GpxFile.Text;
             _globalSettings.VerboseRecycling = cb_VerboseRecycling.Checked;
-            _globalSettings.RecycleInventoryAtUsagePercentage = Convert.ToSingle(nUD_RecycleInventoryAtUsagePercentag.Value) / 100;
+            _globalSettings.RecycleInventoryAtUsagePercentage = Convert.ToDouble(nUD_RecycleInventoryAtUsagePercentag.Value);
             _globalSettings.KeepMinCp = Convert.ToInt32(nUD_KeepMinCp.Value);
             _globalSettings.KeepMinDuplicatePokemon = Convert.ToInt32(nUD_KeepMinDuplicatePokemon.Value);
             _globalSettings.KeepMinIvPercentage = Convert.ToSingle(nUD_KeepMinIvPercentage.Value);
@@ -215,11 +242,11 @@ namespace NecroBot_Settings_GUI
             _globalSettings.RenameTemplate = tb_RenameTemplate.Text;
             _globalSettings.MaxPokeballsPerPokemon = Convert.ToInt32(nUD_MaxPokeballsPerPokemon.Value);
             _globalSettings.MaxTravelDistanceInMeters = Convert.ToInt32(nUD_MaxTravelDistanceInMeters.Value);
-            _globalSettings.TotalAmountOfPokebalsToKeep = Convert.ToInt32(nUD_TotalAmountOfPokebalsToKeep.Value);
+            _globalSettings.TotalAmountOfPokeballsToKeep = Convert.ToInt32(nUD_TotalAmountOfPokebalsToKeep.Value);
             _globalSettings.TotalAmountOfPotionsToKeep = Convert.ToInt32(nUD_TotalAmountOfPotionsToKeep.Value);
             _globalSettings.TotalAmountOfRevivesToKeep = Convert.ToInt32(nUD_TotalAmountOfRevivesToKeep.Value);
             _globalSettings.UseGreatBallAboveCp = Convert.ToInt32(nUD_UseGreatBallAboveCp.Value);
-            _globalSettings.UseUltraBallAboveCp = Convert.ToInt32(nUD_UseGreatBallAboveIv.Value);
+            _globalSettings.UseUltraBallAboveCp = Convert.ToInt32(nUD_UseUltraBallAboveIv.Value);
             _globalSettings.UseMasterBallAboveCp = Convert.ToInt32(nUD_UseMasterBallAboveCp.Value);
             _globalSettings.UseGreatBallAboveIv = Convert.ToInt32(nUD_UseGreatBallAboveIv.Value);
             _globalSettings.UseUltraBallAboveIv = Convert.ToInt32(nUD_UseUltraBallAboveIv.Value);
@@ -231,7 +258,30 @@ namespace NecroBot_Settings_GUI
             _globalSettings.AutoFavoritePokemon = cb_AutoFavoritePokemon.Checked;
             _globalSettings.UsePokemonToNotCatchFilter = cb_UsePokemonToNotCatchFilter.Checked;
             _globalSettings.WebSocketPort = Convert.ToInt32(nUD_WebSocketPort.Value);
+            _globalSettings.UpgradePokemonMinimumStatsOperator = cb_UpgradePokemonMinimumStatsOperator.Text;
+            _globalSettings.KeepMinLvl = Convert.ToInt32(nUD_KeepMinLvl.Value);
+            _globalSettings.KeepMinOperator = cb_KeepMinOperator.Text;
+            _globalSettings.UseKeepMinLvl = cb_UseKeepMinLvl.Checked;
+            _globalSettings.TransferWeakPokemon = cb_TransferWeakPokemon.Checked;
+            _globalSettings.TransferDuplicatePokemonOnCapture = cb_TransferDuplicatePokemonOnCapture.Checked;
+            _globalSettings.EnableHumanizedThrows = cb_EnableHumanizedThrows.Checked;
+            _globalSettings.TotalAmountOfBerriesToKeep = Convert.ToInt32(nUD_TotalAmountOfBerriesToKeep.Value);
+            _globalSettings.UseBerriesMinCp = Convert.ToInt32(nUD_UseBerriesMinCp.Value);
+            _globalSettings.UseBerriesMinIv = Convert.ToSingle(nUD_UseBerriesMinIv.Value);
+            _globalSettings.UseBerriesBelowCatchProbability = Convert.ToDouble(nUD_UseBerriesBelowCatchProbability.Value) / 100;
+            _globalSettings.UseBerriesOperator = cb_UseBerriesOperator.Text;
+            _globalSettings.GetSniperInfoFromPokezz = cb_GetSniperInfoFromPokezz.Checked;
+            _globalSettings.GetOnlyVerifiedSniperInfoFromPokezz = cb_GetOnlyVerifiedSniperInfoFromPokezz.Checked;
+            _globalSettings.UsePokemonSniperFilterOnly = cb_UsePokemonSniperFilterOnly.Checked;
+            _globalSettings.NiceThrowChance = Convert.ToInt32(nUD_NiceThrowChance.Value);
+            _globalSettings.GreatThrowChance = Convert.ToInt32(nUD_GreatThrowChance.Value);
+            _globalSettings.ExcellentThrowChance = Convert.ToInt32(nUD_ExcellentThrowChance.Value);
+            _globalSettings.CurveThrowChance = Convert.ToInt32(nUD_CurveThrowChance.Value);
 
+            _globalSettings.ForceGreatThrowOverIv = Convert.ToDouble(nUD_ForceGreatThrowOverIv.Value);
+            _globalSettings.ForceExcellentThrowOverIv = Convert.ToDouble(nUD_ForceExcellentThrowOverIv.Value);
+            _globalSettings.ForceGreatThrowOverCp = Convert.ToInt32(nUD_ForceGreatThrowOverCp.Value);
+            _globalSettings.ForceExcellentThrowOverCp = Convert.ToInt32(nUD_ForceExcellentThrowOverCp.Value);
 
 
             if (radioPTC.Checked == true)
@@ -258,12 +308,9 @@ namespace NecroBot_Settings_GUI
                 this.Close();
             }
 
-            b_StartNecroBot.Enabled = true;
-        }
-
-        private void btnReloadSettings_Click(object sender, EventArgs e)
-        {
             loadSettings();
+
+            b_StartNecroBot.Enabled = true;
         }
 
         private void FindAdressButton_Click(object sender, EventArgs e)
@@ -284,7 +331,6 @@ namespace NecroBot_Settings_GUI
         {
             gMapControl1.Zoom = trackBar.Value;
         }
-
 
         private void gMapControl1_DoubleClick(object sender, MouseEventArgs e)
         {
